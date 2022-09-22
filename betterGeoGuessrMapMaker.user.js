@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Better GeoGuessr map maker v1.6a
+// @name         Better GeoGuessr map maker v1.6
 // @namespace    GeoGuessr scripts
-// @version      1.6a
+// @version      1.6
 // @description  Choose which street view year to show on your map.
 // @author       echandler
 // @match        https://www.geoguessr.com/map-maker/*
