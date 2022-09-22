@@ -12,4 +12,4 @@ On the map maker page, the street view coverage will show the default year autom
 
 [Click here to install](https://github.com/echandler/PanoID-for-Geoguessr-map-maker/raw/main/betterGeoGuessrMapMaker.user.js). If this doesn't work, open a new file in Tampermonkey and copy and paste the user.js script above into it.
 
-If you plan to make a map with many locations, try https://map-making.app/ which has many more additional features that make map making alot easier.
+If you plan to make a map with many locations, try https://map-making.app/ which has many more additional features that make map making a lot easier.
