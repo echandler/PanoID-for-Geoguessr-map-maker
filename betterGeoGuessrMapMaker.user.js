@@ -11,7 +11,7 @@
 // @grant        GM_addStyle
 // ==/UserScript==
 
-GM_addStyle(`.betterMapMaker {display: none; position: absolute;font-family: var(--font-neo-sans); background: rgba(128, 182, 193, 0.6); padding: 10px; z-index:1000; border-radius:5px;cursor: all-scroll;} `);
+GM_addStyle(`.betterMapMaker {display: none; position: absolute;font-family: var(--font-neo-sans); background: linear-gradient(155deg, rgba(0, 212, 255, 0.6) 0%, rgba(9, 9, 121, 0.6) 35%, rgba(0, 212, 255, 0.6) 100%); padding: 10px; z-index:1000; border-radius:5px;cursor: all-scroll;} `);
 GM_addStyle(`select#panoIds:focus-visible { outline: none; } select#panoIds:focus {background-color: white !Important;}`);
 
 let months = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
