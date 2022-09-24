@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Better GeoGuessr map maker v2.0
+// @name         Better GeoGuessr map maker v2.1
 // @namespace    GeoGuessr scripts
-// @version      2.0
+// @version      2.1
 // @description  Choose which street view year to show on your map.
 // @author       echandler
 // @match        https://www.geoguessr.com/*
@@ -70,12 +70,11 @@ function customSetPano(panoID){
         let data1 = await SVS.getPanorama({ location: { lat: loc.lat(), lng: loc.lng() }, radius: 50 }).catch((e)=>{ console.error(e); });
         // SVS.getPanorama({pano:panoID, radius: 50} )
 
-        let keys = Object.keys(data1);
-        console.log(data1, keys);
-
         let p = that.location.pano;
 
         panoIds.innerHTML = "";
+
+        if (!data1) return;
 
         let option = document.createElement("option");
         option.value = panoID;
