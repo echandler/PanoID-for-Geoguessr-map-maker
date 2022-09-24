@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Better GeoGuessr map maker v1.9
+// @name         Better GeoGuessr map maker v2.0
 // @namespace    GeoGuessr scripts
-// @version      1.9
+// @version      2.0
 // @description  Choose which street view year to show on your map.
 // @author       echandler
 // @match        https://www.geoguessr.com/*
@@ -45,23 +45,33 @@ unsafeWindow.modify_proto_setPano = function (doModify) {
     google.maps.StreetViewPanorama.prototype.setPano = doModify? customSetPano : _setPano;
 }
 
-function customSetPano(panoID) {
+function customSetPano(panoID){
     unsafeWindow.newSV = this;
 
     let that = this;
 
-    setTimeout(async function () {
+    setTimeout(async function(){
         // Have to wait for the that.location.latLng to update.
+        let panoIds = document.getElementById("panoIds");
+
+        let ErrorMsg = setTimeout(()=>{
+            panoIds.innerHTML = "";
+
+            let option = document.createElement("option");
+            option.style.paddingLeft = "1em";
+            option.innerHTML = "No data found.";
+            option.selected = true;
+
+            panoIds.appendChild(option);
+        }, 1000);
 
         let SVS = new google.maps.StreetViewService();
         let loc = that.location.latLng;
-        let data1 = await SVS.getPanorama({ location: { lat: loc.lat(), lng: loc.lng() }, radius: 50 });
+        let data1 = await SVS.getPanorama({ location: { lat: loc.lat(), lng: loc.lng() }, radius: 50 }).catch((e)=>{ console.error(e); });
         // SVS.getPanorama({pano:panoID, radius: 50} )
 
         let keys = Object.keys(data1);
         console.log(data1, keys);
-
-        let panoIds = document.getElementById("panoIds");
 
         let p = that.location.pano;
 
@@ -83,9 +93,11 @@ function customSetPano(panoID) {
             if (option.value === panoID) {
                 option.selected = true;
             }
-            console.log(data1.data.time[n].pano, that.location.pano);
+
             panoIds.appendChild(option);
         }
+
+        clearTimeout(ErrorMsg);
     }, 500);
 
     return _setPano.apply(this, arguments);
