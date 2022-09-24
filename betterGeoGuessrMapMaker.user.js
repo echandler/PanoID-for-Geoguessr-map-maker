@@ -1,13 +1,13 @@
 // ==UserScript==
-// @name         Better GeoGuessr map maker v1.7
+// @name         Better GeoGuessr map maker v1.8
 // @namespace    GeoGuessr scripts
-// @version      1.7
+// @version      1.8
 // @description  Choose which street view year to show on your map.
 // @author       echandler
-// @match        https://www.geoguessr.com/map-maker/*
+// @match        https://www.geoguessr.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=geoguessr.com
 // @downloadURL  https://github.com/echandler/PanoID-for-Geoguessr-map-maker/raw/main/betterGeoGuessrMapMaker.user.js
-// @run-at       document-start
+// @run-at       document-end
 // @grant        GM_addStyle
 // ==/UserScript==
 
@@ -16,43 +16,26 @@ GM_addStyle(`select#panoIds:focus-visible { outline: none; } select#panoIds:focu
 
 let months = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 let isActive = false;
+let UIContainer = null;
 
-const mutationCallback = function (mutationsList, observer) {
-     for (let mutation of mutationsList) {
-          if (mutation.type === "childList") {
-               let el = mutation.addedNodes[0];
-               if (el && el.tagName === "SCRIPT" && /maps/.test(el.src)) {
-                    observer.disconnect();
-
-                    el.addEventListener("load", function () {
-                         isActive = true;
-                         unsafeWindow.modify_proto_setPano();
-                         makeUI();
-                         showLoadMsg();
-                    });
-               }
-          }
-     }
-};
-
-const targetNode = document.head;
-const config = { childList: true, subtree: true };
-
-const observer = new MutationObserver(mutationCallback);
-observer.observe(targetNode, config);
+let googleDetector = setInterval(function(){
+    if (!unsafeWindow.google) return;
+    clearInterval(googleDetector);
+    unsafeWindow.modify_proto_setPano();
+    makeUI();
+}, 1000);
 
 let urlChangeDetector = setInterval(function () {
-     let el = document.getElementById("betterMapMaker_body");
-     if (!el) return;
+     if (!UIContainer) return;
 
      if (!/map-maker/.test(location.href)) {
           isActive = false;
-          el.style.display = "none";
+          UIContainer.style.display = "none";
           return;
      }
 
      isActive = true;
-     el.style.display = "block";
+     UIContainer.style.display = "block";
 }, 1000);
 
 unsafeWindow.modify_proto_setPano = function (msg) {
@@ -120,6 +103,8 @@ function makeUI() {
      body.className = "betterMapMaker";
      body.style.top = bodyXY.y + "%";
      body.style.left = bodyXY.x + "%";
+
+     UIContainer = body;
 
      let panoIds = dce("select");
      panoIds.id = "panoIds";
@@ -219,10 +204,11 @@ async function saveData() {
      updateMap(cData, function () {/*Function that does nothing*/});
 }
 
-// Copied from https://openuserjs.org/scripts/slashP/Copypaste_Geoguessr_map_data version 2.3.0.
+// --- Copied from https://openuserjs.org/scripts/slashP/Copypaste_Geoguessr_map_data version 2.3.0. ---
 const newMapMakerContainerSelector = "[class*='sidebar_container']";
 const isNewMapMaker = () => document.querySelector(newMapMakerContainerSelector) !== null;
 const mapId = () => location.href.split("/").pop();
+//------------------------------------------------------------------------------------------------------
 
 async function getExistingMapData() {
      // Copied from https://openuserjs.org/scripts/slashP/Copypaste_Geoguessr_map_data version 2.3.0.
@@ -271,18 +257,3 @@ function updateMap(newMap, setFeedback) {
           });
 }
 unsafeWindow.updateMap = updateMap;
-
-function showLoadMsg() {
-     let msg = document.createElement("div");
-     msg.innerText = "Better map maker loaded!";
-     msg.style.cssText = "position: absolute; top: 10px; left: 10px; transition: 1000ms ease-in; font-weight: bold; background: white;";
-
-     document.body.appendChild(msg);
-
-     setTimeout(function () {
-          msg.style.top = "-20px";
-          setTimeout(function () {
-               msg.parentElement.removeChild(msg);
-          }, 1100);
-     }, 5000);
-}
