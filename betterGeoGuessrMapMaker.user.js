@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Better GeoGuessr map maker v2.1
+// @name         Better GeoGuessr map maker v2.2
 // @namespace    GeoGuessr scripts
-// @version      2.1
+// @version      2.2
 // @description  Choose which street view year to show on your map.
 // @author       echandler
 // @match        https://www.geoguessr.com/*
@@ -83,12 +83,21 @@ function customSetPano(panoID){
         panoIds.appendChild(option);
 
         for (var n = 0; n < data1.data.time.length; n++) {
-            let d = new Date(data1.data.time[n].wn);
+            let keys = Object.keys(data1.data.time[n]);
+            let key = null;
+            keys.forEach(_key =>{
+                if (data1.data.time[n][_key].constructor === Date)
+                    key = _key;
+            });
+
+            let d = new Date(data1.data.time[n][key]);
             let option = document.createElement("option");
+  
             option.style.paddingLeft = "1em";
             option.value = data1.data.time[n].pano;
             option.innerHTML = "&nbsp;" + months[d.getMonth()] + "&nbsp;" + d.getFullYear();
             option.title = option.value;
+            
             if (option.value === panoID) {
                 option.selected = true;
             }
